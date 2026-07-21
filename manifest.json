@@ -1,0 +1,15 @@
+{
+  "name": "Rugby Dashboard",
+  "short_name": "Rugby",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#111114",
+  "theme_color": "#141418",
+  "icons": [
+    {
+      "src": "app_icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
