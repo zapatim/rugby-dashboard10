@@ -1,27 +1,123 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#141418"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="app_icon.png"><title>Rugby Dashboard</title><style>
-:root{--bg:#111114;--card:#1d1d23;--muted:#b7b7c0;--gold:#f2b443}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#111114,#18181d);color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;min-height:100vh}main{max-width:780px;margin:auto;padding:calc(24px + env(safe-area-inset-top)) 18px 40px}header{display:flex;justify-content:space-between;align-items:flex-end;margin:6px 2px 22px}h1{margin:0;font-size:31px;letter-spacing:-.8px}.sub{color:var(--muted);font-size:14px}.cards{display:grid;gap:15px}.card{background:rgba(29,29,35,.96);border:2px solid var(--accent);border-radius:25px;padding:18px;display:grid;grid-template-columns:78px 1fr auto;gap:15px;align-items:center;box-shadow:0 14px 35px rgba(0,0,0,.22)}.logo{width:74px;height:74px;object-fit:contain;filter:drop-shadow(0 5px 8px rgba(0,0,0,.25))}.team{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#e9e9ed}.opp{font-size:23px;font-weight:800;line-height:1.08;margin:5px 0 8px}.meta{font-size:15px;color:var(--muted);line-height:1.55}.count{font-size:22px;font-weight:900;color:var(--gold);text-align:right;white-space:nowrap}footer{color:#85858f;font-size:12px;text-align:center;margin-top:24px}@media(max-width:560px){.card{grid-template-columns:62px 1fr}.logo{width:58px;height:58px}.count{grid-column:2;text-align:left;font-size:19px}.opp{font-size:20px}}</style></head><body><main><header><div><h1>🏉 Prochains matchs</h1><div class="sub">MHR Espoirs · Crabos · RCO Salagou</div></div><div id="today" class="sub"></div></header><section class="cards" id="cards"></section><footer>Mise à jour automatique selon la date de l’iPhone.</footer></main><script>
-const T=[{name:"MHR Espoirs",accent:"#5D1E68"},{name:"Crabos",accent:"#BE1E2D"},{name:"RCO Salagou",accent:"#1F6748"}],mo=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],da=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];function pd(s){let[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}function nd(d){let x=da[d.getDay()];return x[0].toUpperCase()+x.slice(1)+" "+d.getDate()+" "+mo[d.getMonth()]}function cd(d){let n=new Date();n.setHours(0,0,0,0);let x=Math.round((d-n)/86400000);return x===0?"AUJOURD’HUI":x===1?"DEMAIN":x>1?"J-"+x:"PASSÉ"}const OFFICIAL_LOGOS={
-  "castres_olympique": "https://castres-olympique.com/wp-content/uploads/2026/02/16_9-1024x576.png",
-  "stade_aurillacois": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Stade%20aurillacois%20Cantal%20Auvergne%202018.svg",
-  "ca_brive_correze": "https://commons.wikimedia.org/wiki/Special:FilePath/Club%20athl%C3%A9tique%20Brive%20Corr%C3%A8ze%20Limousin%20logo.svg",
-  "stade_toulousain": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Stade%20Toulousain%20Rugby.svg",
-  "usa_perpignan": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20USA%20Perpignan%202017.svg",
-  "provence_rugby": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Provence%20Rugby%20-%202021.svg",
-  "fc_grenoble": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20FC%20Grenoble%20Rugby.svg",
-  "oyonnax_rugby": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Oyonnax%20Rugby%202018.svg",
-  "rc_toulon": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Rugby%20club%20toulonnais.svg",
-  "cs_bourgoin_jallieu": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20CS%20Bourgoin-Jallieu%20rugby.svg",
-  "nice": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Stade%20ni%C3%A7ois%20rugby.svg",
-  "valence_romans_drome_rugby": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20Valence%20Romans%20Dr%C3%B4me%20Rugby.svg",
-  "rumilly": "https://commons.wikimedia.org/wiki/Special:FilePath/Logo%20RCSR%20Rumilly.svg",
-  "marseillan_rugby_club": "https://api-web.monclubhouse.ffr.fr/assets/2000d1d0-60dd-4b04-a164-df133fe199ce",
-  "olympique_minervois_xv": "https://api-web.monclubhouse.ffr.fr/assets/f3ed8973-7a91-4349-8c37-ab0eea134ae8",
-  "olympique_labruguiere_xv": "https://api-web.monclubhouse.ffr.fr/assets/e609de6a-77cc-4189-84fb-b3a09b433d78",
-  "avenir_bleu_et_blanc": "https://api-web.monclubhouse.ffr.fr/assets/2e375bfc-717e-46c8-9fb9-7f13fbf73e43",
-  "association_ouveillan_cuxac": "https://api-web.monclubhouse.ffr.fr/assets/a0770ac8-4631-4482-bd77-aba1f04a875b",
-  "thore_rugby_club": "https://api-web.monclubhouse.ffr.fr/assets/3f35608e-ac55-4bf6-b0f0-f2d44db2f95f",
-  "olympique_des_monts_de_lacaune": "https://api-web.monclubhouse.ffr.fr/assets/6ad4cbed-8d9d-4995-a5f1-38f5235b3ccf",
-  "racing_club_villeneuvois": "https://api-web.monclubhouse.ffr.fr/assets/07009ded-38ab-4a06-b3e9-271deff6434e"
-};
-function logoFor(m){return OFFICIAL_LOGOS[m.opponent_slug]||m.opponent_slug+".png"}
-fetch("matches.json?"+Date.now()).then(r=>r.json()).then(all=>{let n=new Date();n.setHours(0,0,0,0);cards.innerHTML=T.map(t=>{let m=all.filter(x=>x.team===t.name&&pd(x.date)>=n).sort((a,b)=>a.date.localeCompare(b.date))[0];if(!m)return `<article class="card" style="--accent:${t.accent}"><div></div><div><div class="team">${t.name}</div><div class="opp">Fin de saison</div></div></article>`;let d=pd(m.date);return `<article class="card" style="--accent:${t.accent}"><img class="logo" src="${logoFor(m)}" onerror="this.onerror=null;this.src=m.opponent_slug+'.png'"><div><div class="team">${t.name}</div><div class="opp">${m.opponent}</div><div class="meta">${m.venue_emoji} ${m.venue_label}<br>📅 ${nd(d)}</div></div><div class="count">${cd(d)}</div></article>`}).join("")});today.textContent=new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"short"});if("serviceWorker"in navigator)navigator.serviceWorker.register("service-worker.js")</script></body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101014">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="app_icon.png">
+<title>Rugby Dashboard</title>
+<style>
+:root{
+  --bg:#101014;--panel:rgba(31,31,38,.92);--muted:#aaaab5;--gold:#f6b943;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:
+radial-gradient(circle at 50% -25%,#292934 0,#15151b 42%,#0d0d11 100%);
+color:#fff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+body{min-height:100vh}
+main{width:min(980px,calc(100% - 48px));margin:0 auto;padding:38px 0 46px}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin:0 5px 26px}
+.title-row{display:flex;align-items:center;gap:12px}
+.ball{font-size:38px;filter:drop-shadow(0 5px 12px rgba(0,0,0,.35))}
+h1{font-size:34px;line-height:1;margin:0;letter-spacing:-1px}
+.sub,.today{color:var(--muted);font-size:15px}
+.sub{margin-top:8px}
+.cards{display:grid;gap:18px}
+.card{
+  position:relative;overflow:hidden;
+  min-height:155px;padding:22px 26px;
+  display:grid;grid-template-columns:112px 1fr auto;gap:24px;align-items:center;
+  background:linear-gradient(135deg,rgba(36,36,44,.97),rgba(27,27,33,.97));
+  border:1px solid color-mix(in srgb,var(--accent) 72%,white 8%);
+  border-radius:27px;
+  box-shadow:0 20px 42px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.045)
+}
+.card:before{
+  content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--accent);
+  box-shadow:0 0 25px var(--accent)
+}
+.logo-wrap{
+  width:108px;height:108px;display:grid;place-items:center;
+}
+.logo{
+  display:block;max-width:104px;max-height:104px;width:auto;height:auto;
+  object-fit:contain;filter:drop-shadow(0 7px 10px rgba(0,0,0,.38))
+}
+.team{
+  color:#ededf2;font-weight:800;font-size:15px;letter-spacing:.7px;text-transform:uppercase
+}
+.opp{font-size:28px;font-weight:850;line-height:1.08;letter-spacing:-.5px;margin:6px 0 11px}
+.meta{color:var(--muted);font-size:16px;line-height:1.55}
+.count{
+  padding:10px 14px;border-radius:14px;background:rgba(246,185,67,.105);
+  color:var(--gold);font-weight:900;font-size:23px;white-space:nowrap
+}
+footer{text-align:center;color:#777783;font-size:12px;margin-top:25px}
+@media(max-width:720px){
+  main{width:min(100% - 24px,980px);padding-top:24px}
+  h1{font-size:28px}
+  .card{grid-template-columns:82px 1fr;padding:19px;gap:16px}
+  .logo-wrap{width:80px;height:80px}
+  .logo{max-width:78px;max-height:78px}
+  .opp{font-size:22px}
+  .count{grid-column:2;justify-self:start;font-size:18px}
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <div class="title-row"><span class="ball">🏉</span><h1>Prochains matchs</h1></div>
+    <div class="sub">MHR Espoirs · Crabos · RCO Salagou</div>
+  </div>
+  <div id="today" class="today"></div>
+</header>
+<section class="cards" id="cards"></section>
+<footer>Mise à jour automatique selon la date du Mac.</footer>
+</main>
+<script>
+const TEAMS=[
+{name:"MHR Espoirs",accent:"#72237e"},
+{name:"Crabos",accent:"#da2638"},
+{name:"RCO Salagou",accent:"#27865d"}
+];
+const months=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const days=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+function parseDate(s){const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
+function niceDate(d){const day=days[d.getDay()];return day[0].toUpperCase()+day.slice(1)+" "+d.getDate()+" "+months[d.getMonth()]}
+function countdown(d){
+  const now=new Date();now.setHours(0,0,0,0);
+  const n=Math.round((d-now)/86400000);
+  if(n===0)return"AUJOURD’HUI";
+  if(n===1)return"DEMAIN";
+  return n>1?"J-"+n:"PASSÉ";
+}
+fetch("matches.json?"+Date.now())
+.then(r=>r.json())
+.then(matches=>{
+  const now=new Date();now.setHours(0,0,0,0);
+  cards.innerHTML=TEAMS.map(team=>{
+    const match=matches
+      .filter(m=>m.team===team.name&&parseDate(m.date)>=now)
+      .sort((a,b)=>a.date.localeCompare(b.date))[0];
+    if(!match)return `<article class="card" style="--accent:${team.accent}">
+      <div></div><div><div class="team">${team.name}</div><div class="opp">Fin de saison</div></div></article>`;
+    const date=parseDate(match.date);
+    return `<article class="card" style="--accent:${team.accent}">
+      <div class="logo-wrap"><img class="logo" src="${match.opponent_slug}.png" alt="Logo ${match.opponent}"></div>
+      <div>
+        <div class="team">${team.name}</div>
+        <div class="opp">${match.opponent}</div>
+        <div class="meta">${match.venue_emoji} ${match.venue_label}<br>📅 ${niceDate(date)}</div>
+      </div>
+      <div class="count">${countdown(date)}</div>
+    </article>`;
+  }).join("");
+});
+today.textContent=new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("service-worker.js");
+</script>
+</body>
+</html>
