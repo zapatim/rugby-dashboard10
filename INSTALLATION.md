@@ -1,10 +1,10 @@
-# Installation — Rugby Dashboard Mac
+# Installation — Rugby Dashboard V4 pour Mac
 
-1. Décompressez ce ZIP.
-2. Dans le dépôt GitHub `rugby-dashboard10`, choisissez **Add file → Upload files**.
-3. Glissez **tous les fichiers du dossier**, pas le dossier lui-même.
-4. Acceptez le remplacement des anciens fichiers puis cliquez sur **Commit changes**.
+1. Décompressez le ZIP.
+2. Dans le dépôt GitHub `rugby-dashboard10`, cliquez sur **Add file → Upload files**.
+3. Glissez tous les fichiers contenus dans le dossier décompressé.
+4. Validez le remplacement des fichiers existants, puis cliquez sur **Commit changes**.
 5. Attendez environ une minute.
-6. Ouvrez le dashboard sur le Mac et rechargez avec **⌘ + Maj + R**.
+6. Ouvrez le dashboard avec `?v=4` à la fin de l’adresse, puis rechargez avec **⌘ + Maj + R**.
 
-Tous les logos sont stockés localement dans le dépôt. Ils changeront automatiquement selon le prochain match, sans mise à jour hebdomadaire.
+Cette version conserve « Prochains matchs », n’affiche ni heure ni stade, agrandit les logos, améliore les cartes et change automatiquement la couleur du badge à l’approche du match.
